@@ -38,42 +38,47 @@ namespace ConsoleApplication1
             JObject apps = (JObject)jobject["applist"];
             JObject list = (JObject)apps["apps"];
             JArray app = (JArray)list["app"];
-            for (int i=1522;i<app.Count;i++)
+            for (int i=2980;i<app.Count;i++)
             {
                 JObject game = (JObject)app[i];
                 int appId = (int)game["appid"];
-                pesquisarTitulo(appId);
+                Console.WriteLine(appId);
+                if(appId > 294230)
+                {
+                    pesquisarTitulo(appId);
+                }
+                
             }
         }
         public void pesquisarTitulo(int id)
         {
+            string gameInfoJson;
+            Jogo game = new Jogo();
             using (WebClient client = new WebClient())
             {
-                
-                appDetails = client.DownloadString(@"http://store.steampowered.com/api/appdetails/?appids="+id);
-                
-                string id_string = id.ToString();
-                id_string = "\""+id_string+"\"";
-                Console.WriteLine(id_string);
-                System.IO.File.WriteAllText("path.txt",String.Concat("{", id_string, ":", "{", @"""success""", ":true,", @"""data""", ":"));
-               appDetails = Regex.Replace(appDetails,String.Concat("{",id_string,":","{",@"""success""",":true,",@"""data""",":"),"");
 
-               appDetails = Regex.Replace(appDetails, @"}}}}", "}}");
-            }
+                gameInfoJson = client.DownloadString(@"http://store.steampowered.com/api/appdetails/?appids=" + id.ToString());
 
-            //Tags
-            
-            
-            
-            
-            //AppDetails
-            Jogo app = JsonConvert.DeserializeObject<Jogo>(appDetails);
-            if(app.type == "game")
-            {
-                using (StreamWriter arquivo = File.AppendText(@"gameList.txt"))
+                JObject jObject = JObject.Parse(gameInfoJson);
+                JObject idObject = (JObject)jObject[id.ToString()];
+                bool success = (bool)idObject["success"];
+                if (success)
                 {
-                    arquivo.WriteLine(id);
+                    JObject dataObject = (JObject)idObject["data"];
+
+
+                    //game.steam_appid = (string)dataObject["steam_appid"];
+                    game.type = (string)dataObject["type"];
+                    if (game.type == "game")
+                    {
+                        using (StreamWriter arquivo = File.AppendText(@"gameList.txt"))
+                        {
+                            arquivo.WriteLine(id);
+                        }
+                    }
                 }
+                
+                //AppDetails
             }
         }
     }
