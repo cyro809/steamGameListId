@@ -38,12 +38,13 @@ namespace ConsoleApplication1
             JObject apps = (JObject)jobject["applist"];
             JObject list = (JObject)apps["apps"];
             JArray app = (JArray)list["app"];
-            for (int i=2980;i<app.Count;i++)
+            for (int i=14052;i<app.Count;i++)
             {
                 JObject game = (JObject)app[i];
                 int appId = (int)game["appid"];
                 Console.WriteLine(appId);
-                if(appId > 294230)
+                Console.WriteLine(i);
+                if(appId > 312540)
                 {
                     pesquisarTitulo(appId);
                 }
